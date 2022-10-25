@@ -7,6 +7,7 @@
  */
 
 import React, { useEffect, useState } from "react";
+// import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   SafeAreaView,
   ScrollView,
@@ -17,6 +18,8 @@ import {
   View,
   Button,
   TouchableOpacity,
+  Dimensions,
+  Image,
 } from "react-native";
 import {
   Colors,
@@ -26,16 +29,47 @@ import {
   ReloadInstructions,
 } from "react-native/Libraries/NewAppScreen";
 
-import NfcManager, { NfcTech, NfcEvents } from "react-native-nfc-manager";
+import { NavigationContainer } from "@react-navigation/native";
 
+import NfcManager, { NfcTech, NfcEvents } from "react-native-nfc-manager";
+import TempMenu from "./components/TempMenu";
 import AndroidPrompt from "./components/AndroidPrompt";
+import TempHeader from "./components/TempHeader";
 import { useRef } from "react";
 
+function Section({ img_src, img_name }) {
+  return (
+    <View style={styles.wrapper_section}>
+      <Text>{img_name}</Text>
+      <Image source={img_src}></Image>
+    </View>
+  );
+}
+
 NfcManager.start();
+
 const App = () => {
   const promptRef = useRef();
   const isDarkMode = useColorScheme() === "dark";
   const [scanState, setScanState] = useState(true);
+
+  const DUMMY_SECTIONS = [
+    { name: "desert", src: require("./assets/img/desert.jpeg") },
+    { name: "plain", src: require("./assets/img/plain.png") },
+    {
+      name: "spaceranger fortrest",
+      src: require("./assets/img/spacerangerFortrest.png"),
+    },
+    { name: "spaceship", src: require("./assets/img/spaceship.png") },
+    {
+      name: "Ya'loong forest",
+      src: require("./assets/img/Ya'loongForest.png"),
+    },
+  ];
+
+  const sections = DUMMY_SECTIONS.map((item) => {
+    return <Section img_src={item.src} img_name={item.name}></Section>;
+  });
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
@@ -101,17 +135,22 @@ const App = () => {
   }, [scanState]);
 
   return (
-    <SafeAreaView style={[styles.wrapper, backgroundStyle]}>
+    <SafeAreaView style={[styles.wrapper]}>
       <StatusBar
-        barStyle={isDarkMode ? "light-content" : "dark-content"}
-        backgroundColor={backgroundStyle.backgroundColor}
+        barStyle={!isDarkMode ? "light-content" : "dark-content"}
+        backgroundColor={"black"}
       />
-      <View>
-        <Text>Header</Text>
-      </View>
+      <TempHeader></TempHeader>
 
-      <View>
-        <Button title="press me to read" onPress={readNdef}></Button>
+      <View style={styles.main}>
+        {sections}
+        <Section></Section>
+        <Section></Section>
+        <Section></Section>
+        <Section></Section>
+        <Section></Section>
+
+        {/* <Button title="press me to read" onPress={readNdef}></Button>
         <Button
           title="show prompt"
           onPress={() => promptRef.current.setVisible(true)}
@@ -120,11 +159,10 @@ const App = () => {
         <AndroidPrompt
           reference={promptRef}
           setScanState={setScanState}
-        ></AndroidPrompt>
+        ></AndroidPrompt> */}
       </View>
-      <View>
-        <Text>Footer</Text>
-      </View>
+
+      <TempMenu></TempMenu>
     </SafeAreaView>
   );
 };
@@ -134,6 +172,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    backgroundColor: "#242424",
   },
   sectionContainer: {
     marginTop: 32,
@@ -150,6 +189,18 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: "700",
+  },
+  main: {
+    flex: 1,
+    justifyContent: "flex-start",
+    alignContent: "center",
+  },
+  wrapper_section: {
+    width: Dimensions.get("window").width - 20,
+    backgroundColor: "white",
+    height: 100,
+    marginVertical: 10,
+    borderRadius: 10,
   },
 });
 
