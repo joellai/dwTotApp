@@ -159,35 +159,12 @@ const App = () => {
     }
   }, [scanState]);
 
-  // useEffect(() => {
-  //   (async () => {
-  //     const res = await AsyncStorage.getAllKeys();
-  //     alert(res);
-  //   })();
-  // }, []);
-
   return (
     <SafeAreaView style={[styles.wrapper]}>
       <StatusBar
         barStyle={!isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={"black"}
       />
-      {/* 
-      <Button
-        onPress={async () => {
-          const res = await AsyncStorage.getAllKeys();
-          alert(res);
-        }}
-        title={"getAll"}
-      ></Button>
-
-      <Button
-        onPress={async () => {
-          const res = await AsyncStorage.removeItem('persist:RN');
-          console.log('clear')
-        }}
-        title={"clear"}
-      ></Button> */}
 
       <TempHeader></TempHeader>
       <Provider store={store}>
@@ -197,7 +174,7 @@ const App = () => {
             setScanState={setScanState}
             setTagData={setTagData}
             demo={tagData ? true : false}
-            NfcManager={NfcManager}
+            dirProfile={setProfile}
           ></AndroidPrompt>
           {profile ? (
             <UserProfile></UserProfile>
@@ -208,6 +185,7 @@ const App = () => {
           <TempMenu
             dirProfile={setProfile}
             onTouchToEarn={touchToEarnHandler}
+            profileState={profile}
           ></TempMenu>
         </PersistGate>
       </Provider>
