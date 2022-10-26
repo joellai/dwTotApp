@@ -10,61 +10,156 @@ import {
   TouchableOpacity,
   Modal,
   Dimensions,
-} from 'react-native';
+  ActivityIndicator,
+  Image,
+} from "react-native";
+import { useSelector } from "react-redux";
+import { touchToEarnHandler } from "../../store/storeSlice/userInfoActions";
+import { useState, useEffect } from "react";
+import { Icon } from "@rneui/themed";
+import { useDispatch } from "react-redux";
 
-import {useState, useEffect} from 'react';
-
-export default function AndroidPromp({reference, setScanState}) {
+export default function AndroidPromp({
+  reference,
+  setScanState,
+  setTagData,
+  demo,
+}) {
   const [visible, setVisible] = useState(false);
+  const { token, isLogin, touchToEarnList } = useSelector(
+    (state) => state.userInfoState
+  );
 
+  const dispatch = useDispatch();
   function closeHandler() {
     setVisible(false);
     setScanState(true);
+    setTagData(undefined);
   }
   useEffect(() => {
     if (reference) {
-      reference.current = {setVisible};
+      reference.current = { setVisible };
     }
   }, [reference]);
 
-  return (
-    <Modal visible={visible} transparent={true}>
-      <View style={StyleSheet.content}>
-        <View style={[styles.backdrop, StyleSheet.absoluteFill]}></View>
-        <View style={styles.prompt}>
-          <Text>HELLO NFC</Text>
-          <TouchableOpacity style={styles.btn} onPress={closeHandler}>
-            <Text>Close</Text>
-          </TouchableOpacity>
+  useEffect(() => {
+    if (demo && touchToEarnList.lenght === 0) {
+      dispatch(touchToEarnHandler({ token }));
+    } else if (demo && touchToEarnList.lenght !== 0) {
+      // todo
+      // since the block chain needs time to complete, so here is directly set result to be true for convenience
+      // dispatch()
+    }
+  }, [demo]);
+
+  if (demo) {
+    return (
+      <Modal visible={visible} transparent={true} animationType="slide">
+        <View style={styles.content}>
+          <View style={[styles.backdrop, StyleSheet.absoluteFill]}></View>
+          <View style={styles.prompt}>
+            <Image
+              style={styles.img}
+              source={require("../../assets/img/demo_model.png")}
+              resizeMode={"cover"}
+            ></Image>
+            <View style={styles.wrapper_log}>
+              {touchToEarnList.lenght > 0 &&
+              touchToEarnList[0].status === "success" ? (
+                <>
+                  <Text style={styles.log}>Completed</Text>
+                  <Icon
+                    style={styles.success}
+                    type="material"
+                    name="check-circle-outline"
+                    size={50}
+                    color="#0CC"
+                  ></Icon>
+                </>
+              ) : (
+                <>
+                  <Text style={styles.log}>
+                    Waiting for Dice to be earnd, it may take a while, please
+                    check it later
+                  </Text>
+                  <ActivityIndicator size="large" color="#06AED5" />
+                </>
+              )}
+            </View>
+            <TouchableOpacity style={styles.btn} onPress={closeHandler}>
+              <Text style={styles.txt_btn}>cancel</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </Modal>
-  );
+      </Modal>
+    );
+  } else {
+    return (
+      <Modal visible={visible} transparent={true} animationType="slide">
+        <View style={styles.content}>
+          <View style={[styles.backdrop, StyleSheet.absoluteFill]}></View>
+          <View style={styles.prompt}>
+            <View style={styles.wrapper_log}>
+              <Text style={styles.log}>Please touch your DESIDER model</Text>
+            </View>
+            <ActivityIndicator size="large" color="#06AED5" />
+            <TouchableOpacity style={styles.btn} onPress={closeHandler}>
+              <Text style={styles.txt_btn}>cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
   content: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   backdrop: {
-    backgroundColor: 'rgba(0,0,0,0.3)',
+    backgroundColor: "rgba(0,0,0,0.3)",
   },
   prompt: {
-    position: 'absolute',
-    top: 0,
+    position: "absolute",
+    // top: 300,
     left: 20,
-    width: Dimensions.get('window').width - 2 * 20,
-    backgroundColor: 'white',
-    borderRadius: 8,
-    paddingVertical: 60,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
+    width: Dimensions.get("window").width - 2 * 20,
+    // height: Dimensions.get("window").height / 2,
+    backgroundColor: "#242424",
+    borderRadius: 20,
+    // paddingVertical: 20,
+    // paddingHorizontal: 20,
+    alignItems: "center",
+    overflow: "hidden",
   },
   btn: {
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: "#ccc",
     borderRadius: 8,
     padding: 15,
+    marginBottom: 20,
+    marginTop: 10,
+  },
+  txt_btn: {
+    color: "white",
+  },
+  img: {
+    // width: 300,
+    width: Dimensions.get("window").width - 2 * 20,
+    height: 300,
+  },
+  wrapper_log: {
+    paddingVertical: 15,
+    paddingHorizontal: 40,
+  },
+  log: {
+    textAlign: "center",
+    color: "white",
+  },
+  success: {
+    marginTop: 20,
   },
 });

@@ -7,6 +7,7 @@
  */
 
 import React, { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   SafeAreaView,
@@ -20,6 +21,7 @@ import {
   TouchableOpacity,
   Dimensions,
   Image,
+  ActivityIndicator,
 } from "react-native";
 import {
   Colors,
@@ -28,20 +30,25 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from "react-native/Libraries/NewAppScreen";
-
-import { NavigationContainer } from "@react-navigation/native";
-
+import { PersistGate } from "redux-persist/integration/react";
 import NfcManager, { NfcTech, NfcEvents } from "react-native-nfc-manager";
 import TempMenu from "./components/TempMenu";
 import AndroidPrompt from "./components/AndroidPrompt";
 import TempHeader from "./components/TempHeader";
+import UserProfile from "./components/UserProfile";
 import { useRef } from "react";
+import { Provider } from "react-redux";
+import { store, persistor } from "./store/index";
 
 function Section({ img_src, img_name }) {
   return (
     <View style={styles.wrapper_section}>
-      <Text>{img_name}</Text>
-      <Image source={img_src}></Image>
+      <Text style={styles.section_text}>{img_name}</Text>
+      <Image
+        style={styles.img_section}
+        source={img_src}
+        resizeMode={"cover"}
+      ></Image>
     </View>
   );
 }
@@ -52,10 +59,17 @@ const App = () => {
   const promptRef = useRef();
   const isDarkMode = useColorScheme() === "dark";
   const [scanState, setScanState] = useState(true);
+  const [tagData, setTagData] = useState(undefined);
+  const [profile, setProfile] = useState(false);
 
   const DUMMY_SECTIONS = [
+    {
+      name: "Storm is coming",
+      src: require("./assets/img/storm.png"),
+    },
     { name: "desert", src: require("./assets/img/desert.jpeg") },
     { name: "plain", src: require("./assets/img/plain.png") },
+
     {
       name: "spaceranger fortrest",
       src: require("./assets/img/spacerangerFortrest.png"),
@@ -68,12 +82,23 @@ const App = () => {
   ];
 
   const sections = DUMMY_SECTIONS.map((item) => {
-    return <Section img_src={item.src} img_name={item.name}></Section>;
+    return (
+      <Section
+        key={item.name}
+        img_src={item.src}
+        img_name={item.name}
+      ></Section>
+    );
   });
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  function touchToEarnHandler() {
+    promptRef.current.setVisible(true);
+    readNdef();
+  }
 
   async function readNdef() {
     try {
@@ -83,10 +108,11 @@ const App = () => {
       const tag = await NfcManager.getTag();
       if (tag) {
         promptRef.current.setVisible(true);
+        setTagData(tag);
       }
-      console.warn("Tag found", tag);
     } catch (ex) {
-      console.warn("Oops!", JSON.stringify(ex));
+      // there is a double call problem, when the manager is not cancel, it is called again, there will be a warning,for the demo, the warning is not affecting effect
+      // console.warn("Oops!", JSON.stringify(ex));
     } finally {
       // stop the nfc scanning
       NfcManager.cancelTechnologyRequest();
@@ -109,9 +135,8 @@ const App = () => {
       NfcManager.setEventListener(NfcEvents.DiscoverTag, (tag) => {
         tagFound = tag;
         resolve(tagFound);
-        // console.log('unregister')
-        console.log(tag);
         promptRef.current.setVisible(true);
+        setTagData(tag);
         setScanState(false);
 
         NfcManager.unregisterTagEvent();
@@ -134,35 +159,58 @@ const App = () => {
     }
   }, [scanState]);
 
+  // useEffect(() => {
+  //   (async () => {
+  //     const res = await AsyncStorage.getAllKeys();
+  //     alert(res);
+  //   })();
+  // }, []);
+
   return (
     <SafeAreaView style={[styles.wrapper]}>
       <StatusBar
         barStyle={!isDarkMode ? "light-content" : "dark-content"}
         backgroundColor={"black"}
       />
+      {/* 
+      <Button
+        onPress={async () => {
+          const res = await AsyncStorage.getAllKeys();
+          alert(res);
+        }}
+        title={"getAll"}
+      ></Button>
+
+      <Button
+        onPress={async () => {
+          const res = await AsyncStorage.removeItem('persist:RN');
+          console.log('clear')
+        }}
+        title={"clear"}
+      ></Button> */}
+
       <TempHeader></TempHeader>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <AndroidPrompt
+            reference={promptRef}
+            setScanState={setScanState}
+            setTagData={setTagData}
+            demo={tagData ? true : false}
+            NfcManager={NfcManager}
+          ></AndroidPrompt>
+          {profile ? (
+            <UserProfile></UserProfile>
+          ) : (
+            <ScrollView style={styles.main}>{sections}</ScrollView>
+          )}
 
-      <View style={styles.main}>
-        {sections}
-        <Section></Section>
-        <Section></Section>
-        <Section></Section>
-        <Section></Section>
-        <Section></Section>
-
-        {/* <Button title="press me to read" onPress={readNdef}></Button>
-        <Button
-          title="show prompt"
-          onPress={() => promptRef.current.setVisible(true)}
-        ></Button>
-
-        <AndroidPrompt
-          reference={promptRef}
-          setScanState={setScanState}
-        ></AndroidPrompt> */}
-      </View>
-
-      <TempMenu></TempMenu>
+          <TempMenu
+            dirProfile={setProfile}
+            onTouchToEarn={touchToEarnHandler}
+          ></TempMenu>
+        </PersistGate>
+      </Provider>
     </SafeAreaView>
   );
 };
@@ -191,9 +239,9 @@ const styles = StyleSheet.create({
     fontWeight: "700",
   },
   main: {
-    flex: 1,
-    justifyContent: "flex-start",
-    alignContent: "center",
+    // flex: 1,
+    // justifyContent: "flex-start",
+    // alignContent: "center",
   },
   wrapper_section: {
     width: Dimensions.get("window").width - 20,
@@ -201,6 +249,21 @@ const styles = StyleSheet.create({
     height: 100,
     marginVertical: 10,
     borderRadius: 10,
+    overflow: "hidden",
+    justifyContent: "center",
+  },
+  section_text: {
+    position: "absolute",
+    zIndex: 1,
+    // top: '50%',
+    left: 10,
+    fontSize: 20,
+    color: "white",
+    textTransform: "uppercase",
+  },
+  img_section: {
+    height: 100,
+    width: Dimensions.get("window").width - 20,
   },
 });
 

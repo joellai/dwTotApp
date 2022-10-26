@@ -1,8 +1,8 @@
 import { View, StyleSheet, Button, Dimensions, Pressable } from "react-native";
 import { Icon } from "@rneui/themed";
 import { useState } from "react";
-function TempMenu(props) {
-  const [active, setActive] = useState(undefined);
+function TempMenu({ onTouchToEarn, dirProfile }) {
+  const [active, setActive] = useState("home");
   const type = "material";
   const navItems = [
     { name: "home" },
@@ -13,7 +13,16 @@ function TempMenu(props) {
   ];
 
   function activeTab(e) {
-    setActive(e);
+    if (e !== "add") {
+      setActive(e);
+      dirProfile(false);
+
+      if (e === "person") {
+        dirProfile(true);
+      }
+    } else {
+      onTouchToEarn();
+    }
   }
 
   const navList = navItems.map((item, index) => {
@@ -43,8 +52,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    // width: Dimensions.get("window").width,
-    // borderColor:'black',
     borderRadius: 20,
     position: "absolute",
     bottom: 25,
@@ -52,7 +59,7 @@ const styles = StyleSheet.create({
     right: 20,
     padding: 5,
     height: 90,
-    backgroundColor: "black",
+    backgroundColor: "#242424",
     shadowColor: "#06AED5",
     shadowOffset: {
       width: 0,
