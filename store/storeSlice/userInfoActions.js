@@ -28,7 +28,7 @@ export function signupHandler() {
   };
 }
 
-export function touchToEarnHandler({ model_id, token }) {
+export function touchToEarnHandler({ model_id = "abc", token }) {
   return async function fetchUserInfoThunk(dispatch, getState) {
     dispatch(
       UserInfoActs.updateTouchToEarnStatus({ model_id, status: "waiting" })
