@@ -61,12 +61,16 @@ function UserProfile(props) {
       ></Button> */}
       <View style={styles.wrapper_collection}>
         <Text style={styles.title_collect}>My Collection</Text>
-        <FlatList
-          data={DUMMY_COLLECT}
-          renderItem={CollectionItem}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-        ></FlatList>
+        {touchToEarnList.length > 0 ? (
+          <FlatList
+            data={DUMMY_COLLECT}
+            renderItem={CollectionItem}
+            keyExtractor={(item) => item.id}
+            numColumns={2}
+          ></FlatList>
+        ) : (
+          <Text style={styles.txt_no_item}>No Collection</Text>
+        )}
       </View>
     </View>
   );
@@ -112,6 +116,12 @@ const styles = StyleSheet.create({
     color: "white",
     textAlign: "center",
     fontSize: 20,
+  },
+  txt_no_item: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 20,
+    marginTop: 30,
   },
 });
 

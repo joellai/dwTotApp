@@ -1,7 +1,7 @@
 import { View, StyleSheet, Button, Dimensions, Pressable } from "react-native";
 import { Icon } from "@rneui/themed";
-import { useState } from "react";
-function TempMenu({ onTouchToEarn, dirProfile }) {
+import { useState, useEffect } from "react";
+function TempMenu({ onTouchToEarn, dirProfile, profileState }) {
   const [active, setActive] = useState("home");
   const type = "material";
   const navItems = [
@@ -44,6 +44,10 @@ function TempMenu({ onTouchToEarn, dirProfile }) {
       </Pressable>
     );
   });
+
+  useEffect(() => {
+    profileState && active !== "person" ? setActive("person") : "";
+  }, [profileState, active]);
   return <View style={styles.main}>{navList}</View>;
 }
 

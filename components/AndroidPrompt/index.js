@@ -18,12 +18,14 @@ import { touchToEarnHandler } from "../../store/storeSlice/userInfoActions";
 import { useState, useEffect } from "react";
 import { Icon } from "@rneui/themed";
 import { useDispatch } from "react-redux";
+import { actions as UserInfoActs } from "../../store/storeSlice/userinfoSlice";
 
 export default function AndroidPromp({
   reference,
   setScanState,
   setTagData,
   demo,
+  dirProfile,
 }) {
   const [visible, setVisible] = useState(false);
   const { token, isLogin, touchToEarnList } = useSelector(
@@ -43,73 +45,107 @@ export default function AndroidPromp({
   }, [reference]);
 
   useEffect(() => {
+    const demo_model_id = "abc";
     if (demo && touchToEarnList.lenght === 0) {
-      dispatch(touchToEarnHandler({ token }));
+      dispatch(touchToEarnHandler({ token, model_id: demo_model_id }));
     } else if (demo && touchToEarnList.lenght !== 0) {
       // todo
       // since the block chain needs time to complete, so here is directly set result to be true for convenience
-      // dispatch()
+      dispatch(
+        UserInfoActs.updateTouchToEarnStatus({
+          model_id: demo_model_id,
+          status: "success",
+        })
+      );
     }
   }, [demo]);
 
-  if (demo) {
+  const redirectToProfile = () => {
+    closeHandler();
+    dirProfile(true);
+  };
+
+  //isLogin=false
+  const LoginJsx = (
+    <>
+      <View style={styles.wrapper_log}>
+        <Text style={styles.log}>Please login first</Text>
+      </View>
+      <TouchableOpacity style={styles.btn} onPress={redirectToProfile}>
+        <Text style={styles.txt_btn}>Go to login</Text>
+      </TouchableOpacity>
+    </>
+  );
+
+  if (!isLogin) {
     return (
       <Modal visible={visible} transparent={true} animationType="slide">
         <View style={styles.content}>
           <View style={[styles.backdrop, StyleSheet.absoluteFill]}></View>
-          <View style={styles.prompt}>
-            <Image
-              style={styles.img}
-              source={require("../../assets/img/demo_model.png")}
-              resizeMode={"cover"}
-            ></Image>
-            <View style={styles.wrapper_log}>
-              {touchToEarnList.lenght > 0 &&
-              touchToEarnList[0].status === "success" ? (
-                <>
-                  <Text style={styles.log}>Completed</Text>
-                  <Icon
-                    style={styles.success}
-                    type="material"
-                    name="check-circle-outline"
-                    size={50}
-                    color="#0CC"
-                  ></Icon>
-                </>
-              ) : (
-                <>
-                  <Text style={styles.log}>
-                    Waiting for Dice to be earnd, it may take a while, please
-                    check it later
-                  </Text>
-                  <ActivityIndicator size="large" color="#06AED5" />
-                </>
-              )}
-            </View>
-            <TouchableOpacity style={styles.btn} onPress={closeHandler}>
-              <Text style={styles.txt_btn}>cancel</Text>
-            </TouchableOpacity>
-          </View>
+          <View style={styles.prompt}>{LoginJsx}</View>
         </View>
       </Modal>
     );
   } else {
-    return (
-      <Modal visible={visible} transparent={true} animationType="slide">
-        <View style={styles.content}>
-          <View style={[styles.backdrop, StyleSheet.absoluteFill]}></View>
-          <View style={styles.prompt}>
-            <View style={styles.wrapper_log}>
-              <Text style={styles.log}>Please touch your DESIDER model</Text>
+    if (demo) {
+      return (
+        <Modal visible={visible} transparent={true} animationType="slide">
+          <View style={styles.content}>
+            <View style={[styles.backdrop, StyleSheet.absoluteFill]}></View>
+            <View style={styles.prompt}>
+              <Image
+                style={styles.img}
+                source={require("../../assets/img/demo_model.png")}
+                resizeMode={"cover"}
+              ></Image>
+              <View style={styles.wrapper_log}>
+                {touchToEarnList.lenght > 0 &&
+                touchToEarnList[0].status === "success" ? (
+                  <>
+                    <Text style={styles.log}>Completed</Text>
+                    <Icon
+                      style={styles.success}
+                      type="material"
+                      name="check-circle-outline"
+                      size={50}
+                      color="#0CC"
+                    ></Icon>
+                  </>
+                ) : (
+                  <>
+                    <Text style={styles.log}>
+                      Waiting for Dice to be earnd, it may take a while, please
+                      check it later
+                    </Text>
+                    <ActivityIndicator size="large" color="#06AED5" />
+                  </>
+                )}
+              </View>
+              <TouchableOpacity style={styles.btn} onPress={closeHandler}>
+                <Text style={styles.txt_btn}>cancel</Text>
+              </TouchableOpacity>
             </View>
-            <ActivityIndicator size="large" color="#06AED5" />
-            <TouchableOpacity style={styles.btn} onPress={closeHandler}>
-              <Text style={styles.txt_btn}>cancel</Text>
-            </TouchableOpacity>
           </View>
-        </View>
-      </Modal>
-    );
+        </Modal>
+      );
+    } else {
+      return (
+        <Modal visible={visible} transparent={true} animationType="slide">
+          <View style={styles.content}>
+            <View style={[styles.backdrop, StyleSheet.absoluteFill]}></View>
+            <View style={styles.prompt}>
+              <View style={styles.wrapper_log}>
+                <Text style={styles.log}>Please touch your DESIDER model</Text>
+              </View>
+              <ActivityIndicator size="large" color="#06AED5" />
+              <TouchableOpacity style={styles.btn} onPress={closeHandler}>
+                <Text style={styles.txt_btn}>cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Modal>
+      );
+    }
   }
 }
 
