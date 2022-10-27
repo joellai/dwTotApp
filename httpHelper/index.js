@@ -60,18 +60,25 @@ async function login({ pubk, ctrAdrs }) {
   }
 }
 
-async function touchToEarn({ token, model_id = undefined }) {
+async function touchToEarn({
+  token,
+  model_id = undefined,
+  privateKey,
+  contractAddress,
+}) {
   const PARAM_URL = "/touch-to-earn";
   try {
+    console.log('trigger');
     const res = await axios.post(
       BACKEND_BASE_URL + PARAM_URL,
-      { token, model_id },
+      { token, model_id, privateKey, contractAddress },
       {
         headers: {
           "Content-Type": "application/json",
         },
       }
     );
+    console.log('sent')
     //waiting: app send request; pending:waiting chainblock; success
     return "pending";
   } catch (e) {
