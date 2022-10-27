@@ -46,9 +46,9 @@ export default function AndroidPromp({
 
   useEffect(() => {
     const demo_model_id = "abc";
-    if (demo && touchToEarnList.lenght === 0) {
+    if (demo && touchToEarnList.length === 0) {
       dispatch(touchToEarnHandler({ token, model_id: demo_model_id }));
-    } else if (demo && touchToEarnList.lenght !== 0) {
+    } else if (demo && touchToEarnList.length !== 0) {
       // todo
       // since the block chain needs time to complete, so here is directly set result to be true for convenience
       dispatch(
@@ -145,13 +145,6 @@ export default function AndroidPromp({
               <TouchableOpacity style={styles.btn} onPress={closeHandler}>
                 <Text style={styles.txt_btn}>cancel</Text>
               </TouchableOpacity>
-
-              <Button
-                title={"clear"}
-                onPress={() => {
-                  dispatch(UserInfoActs.clearTouchToEarnList());
-                }}
-              ></Button>
             </View>
           </View>
         </Modal>
