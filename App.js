@@ -6,9 +6,8 @@
  * @flow strict-local
  */
 
+import DevPanel from "./components/DevPanel";
 import React, { useEffect, useState } from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
-// import { SafeAreaProvider } from "react-native-safe-area-context";
 import {
   SafeAreaView,
   ScrollView,
@@ -39,17 +38,20 @@ import UserProfile from "./components/UserProfile";
 import { useRef } from "react";
 import { Provider } from "react-redux";
 import { store, persistor } from "./store/index";
+import { Pressable } from "react-native";
 
-function Section({ img_src, img_name }) {
+function Section({ img_src, img_name, onPress }) {
   return (
-    <View style={styles.wrapper_section}>
-      <Text style={styles.section_text}>{img_name}</Text>
-      <Image
-        style={styles.img_section}
-        source={img_src}
-        resizeMode={"cover"}
-      ></Image>
-    </View>
+    <Pressable onPress={onPress}>
+      <View style={styles.wrapper_section}>
+        <Text style={styles.section_text}>{img_name}</Text>
+        <Image
+          style={styles.img_section}
+          source={img_src}
+          resizeMode={"cover"}
+        ></Image>
+      </View>
+    </Pressable>
   );
 }
 
@@ -61,6 +63,11 @@ const App = () => {
   const [scanState, setScanState] = useState(true);
   const [tagData, setTagData] = useState(undefined);
   const [profile, setProfile] = useState(false);
+  const [devPanel, setDevPanel] = useState(false);
+
+  const toggleDev = () => {
+    setDevPanel(true);
+  };
 
   const DUMMY_SECTIONS = [
     {
@@ -87,6 +94,7 @@ const App = () => {
         key={item.name}
         img_src={item.src}
         img_name={item.name}
+        onPress={toggleDev}
       ></Section>
     );
   });
@@ -169,6 +177,8 @@ const App = () => {
       <TempHeader></TempHeader>
       <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
+          {devPanel && <DevPanel toggle={setDevPanel}></DevPanel>}
+
           <AndroidPrompt
             reference={promptRef}
             setScanState={setScanState}

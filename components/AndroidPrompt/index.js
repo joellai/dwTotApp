@@ -74,6 +74,10 @@ export default function AndroidPromp({
       <TouchableOpacity style={styles.btn} onPress={redirectToProfile}>
         <Text style={styles.txt_btn}>Go to login</Text>
       </TouchableOpacity>
+
+      <TouchableOpacity style={styles.btn} onPress={closeHandler}>
+        <Text style={styles.txt_btn}>cancel</Text>
+      </TouchableOpacity>
     </>
   );
 
@@ -99,7 +103,7 @@ export default function AndroidPromp({
                 resizeMode={"cover"}
               ></Image>
               <View style={styles.wrapper_log}>
-                {touchToEarnList.lenght > 0 &&
+                {touchToEarnList.length > 0 &&
                 touchToEarnList[0].status === "success" ? (
                   <>
                     <Text style={styles.log}>Completed</Text>
@@ -141,6 +145,13 @@ export default function AndroidPromp({
               <TouchableOpacity style={styles.btn} onPress={closeHandler}>
                 <Text style={styles.txt_btn}>cancel</Text>
               </TouchableOpacity>
+
+              <Button
+                title={"clear"}
+                onPress={() => {
+                  dispatch(UserInfoActs.clearTouchToEarnList());
+                }}
+              ></Button>
             </View>
           </View>
         </Modal>

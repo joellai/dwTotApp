@@ -30,7 +30,7 @@ const userInfoSlice = createSlice({
       console.log(action);
       console.log(status);
       const target = state.touchToEarnList.find(
-        (item) => item._id === model_id
+        (item) => item.model_id === model_id
       );
       console.log(target);
       if (!target) {
@@ -55,6 +55,9 @@ const userInfoSlice = createSlice({
     },
     clearInfo: (state) => {
       return ({ ...state } = { ...initialState });
+    },
+    clearTouchToEarnList: (state) => {
+      state.touchToEarnList = [];
     },
   },
 });

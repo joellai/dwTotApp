@@ -51,17 +51,9 @@ function UserProfile(props) {
           }}
         ></Button>
       )}
-
-      {/* <Button
-        title="clear"
-        onPress={() => {
-          dispatch(userInfoActions.clearInfo());
-          alert('trigger');
-        }}
-      ></Button> */}
       <View style={styles.wrapper_collection}>
         <Text style={styles.title_collect}>My Collection</Text>
-        {touchToEarnList.length > 0 ? (
+        {userInfo.touchToEarnList.length > 0 && isLogin ? (
           <FlatList
             data={DUMMY_COLLECT}
             renderItem={CollectionItem}
