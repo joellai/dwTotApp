@@ -2,8 +2,8 @@ import Constants from "expo-constants";
 import axios from "axios";
 const { manifest } = Constants;
 
-// const BACKEND_BASE_URL ='https://api.desider.com/gameapp_express';
-const BACKEND_BASE_URL = `http://192.168.8.244:3000`;
+const BACKEND_BASE_URL ='https://api.desider.com/gameapp_express';
+// const BACKEND_BASE_URL = `http://192.168.8.244:3000`;
 
 async function signup() {
   const PARAM_URL = "/signup";
