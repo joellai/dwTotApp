@@ -14,6 +14,7 @@ function DevPanel({ toggle }) {
   function clearTouchToEarnList() {
     dispatch(UserInfoActs.clearTouchToEarnList());
   }
+
   return (
     <Modal>
       <Button
@@ -32,6 +33,11 @@ function DevPanel({ toggle }) {
         title="cancel"
         onPress={() => toggle(false)}
       ></Button>
+
+      <View>
+        <Text>User info</Text>
+        <Text>{JSON.stringify(userInfo)}</Text>
+      </View>
     </Modal>
   );
 }

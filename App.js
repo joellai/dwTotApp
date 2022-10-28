@@ -44,7 +44,7 @@ function Section({ img_src, img_name, onPress }) {
   return (
     <Pressable onPress={onPress}>
       <View style={styles.wrapper_section}>
-        <Text style={styles.section_text}>{img_name}</Text>
+        {/* <Text style={styles.section_text}>{img_name}</Text> */}
         <Image
           style={styles.img_section}
           source={img_src}
@@ -71,10 +71,10 @@ const App = () => {
   };
 
   const DUMMY_SECTIONS = [
-    // {
-    //   name: "Storm is coming",
-    //   src: require("./assets/img/storm.png"),
-    // }
+    {
+      name: "Storm is coming",
+      src: require("./assets/img/storm.png"),
+    }
   ];
 
   const sections = DUMMY_SECTIONS.map((item) => {
@@ -223,7 +223,7 @@ const styles = StyleSheet.create({
   wrapper_section: {
     width: Dimensions.get("window").width - 20,
     backgroundColor: "white",
-    height: 100,
+    // height: 100,
     marginVertical: 10,
     borderRadius: 10,
     overflow: "hidden",
@@ -239,7 +239,7 @@ const styles = StyleSheet.create({
     textTransform: "uppercase",
   },
   img_section: {
-    height: 100,
+    height: Dimensions.get("window").height,
     width: Dimensions.get("window").width - 20,
   },
 });
