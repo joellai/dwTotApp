@@ -6,18 +6,23 @@
     "assetBundlePatterns": [
       "**/*"
     ],
-    "icon":"./assets/logo.png",
+    "icon": "./assets/icon.png",
     "splash": {
-      "image": "./assets/logo.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "black"
-    
+      "backgroundColor": "#000000"
     },
     "extra": {
       "eas": {
         "projectId": "634971f7-7cf8-4694-82fb-72f2070fe02e"
       }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/splash.png",
+        "backgroundColor": "#000000"
+      }
     }
   },
-  "name": "tot"
+  "name": "TOT"
 }
