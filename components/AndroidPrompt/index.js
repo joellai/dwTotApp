@@ -167,13 +167,13 @@ const styles = StyleSheet.create({
     // top: 300,
     left: 20,
     width: Dimensions.get("window").width - 2 * 20,
-    // height: Dimensions.get("window").height / 2,
+    height: Dimensions.get("window").height / 1.5,
     backgroundColor: "#242424",
     borderRadius: 20,
-    // paddingVertical: 20,
-    // paddingHorizontal: 20,
     alignItems: "center",
     overflow: "hidden",
+    justifyContent:'space-between'
+
   },
   btn: {
     borderWidth: 1,

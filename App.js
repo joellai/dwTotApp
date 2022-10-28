@@ -64,28 +64,17 @@ const App = () => {
   const [tagData, setTagData] = useState(undefined);
   const [profile, setProfile] = useState(false);
   const [devPanel, setDevPanel] = useState(false);
+  
 
   const toggleDev = () => {
     setDevPanel(true);
   };
 
   const DUMMY_SECTIONS = [
-    {
-      name: "Storm is coming",
-      src: require("./assets/img/storm.png"),
-    },
-    { name: "desert", src: require("./assets/img/desert.jpeg") },
-    { name: "plain", src: require("./assets/img/plain.png") },
-
-    {
-      name: "spaceranger fortrest",
-      src: require("./assets/img/spacerangerFortrest.png"),
-    },
-    { name: "spaceship", src: require("./assets/img/spaceship.png") },
-    {
-      name: "Ya'loong forest",
-      src: require("./assets/img/Ya'loongForest.png"),
-    },
+    // {
+    //   name: "Storm is coming",
+    //   src: require("./assets/img/storm.png"),
+    // }
   ];
 
   const sections = DUMMY_SECTIONS.map((item) => {
